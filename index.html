@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indelible Z — Crimson Vault Archive</title>
+    <title>Immutable Z — Crimson Vault Archive</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -175,53 +175,6 @@
             gap: 10px;
         }
 
-        /* Arka Plan Müzik Çalar Kutusu */
-        .bg-music-player {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--badge-bg);
-            border: 1px solid var(--border-crimson);
-            padding: 4px 10px;
-            border-radius: 12px;
-        }
-
-        .btn-music-action {
-            background: rgba(225, 29, 72, 0.2);
-            border: 1px solid var(--border-crimson);
-            color: var(--text-main);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-music-action:hover {
-            background: var(--crimson-accent);
-            color: #fff;
-        }
-
-        .music-title-display {
-            font-size: 0.72rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-            max-width: 90px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .music-volume-slider {
-            width: 45px;
-            accent-color: var(--crimson-accent);
-            cursor: pointer;
-        }
-
         .header-search-container {
             display: flex;
             align-items: center;
@@ -265,7 +218,7 @@
         }
 
         .header-search-container.open .expandable-search-input {
-            width: 200px;
+            width: 220px;
             opacity: 1;
             padding: 0.5rem 0.85rem;
             margin-left: 8px;
@@ -661,7 +614,7 @@
             background: rgba(0, 0, 0, 0.2);
         }
 
-        /* Anı Odası - Kafaları Dengeleyen Hiza */
+        /* Anı Odası - Kafaları Dengeleyecek Hiza (object-position) */
         .memory-room-container {
             display: flex;
             align-items: center;
@@ -686,7 +639,7 @@
             width: 100%;
             height: 340px;
             object-fit: cover;
-            object-position: center 25%;
+            object-position: center 25%; /* Kafa hizalarını tam eşitlemek için görselin odağı yukarıya alındı */
             border-radius: 14px;
             filter: blur(12px) brightness(0.7);
             transition: all 0.4s ease;
@@ -751,7 +704,7 @@
         <div class="brand-area">
             <div class="brand-badge">Z</div>
             <div class="brand-title">
-                <h1>INDELIBLE Z</h1>
+                <h1>IMMUTABLE Z</h1>
                 <p>Digital Chat & Media Archive</p>
             </div>
         </div>
@@ -769,16 +722,6 @@
         </div>
 
         <div class="header-right-controls">
-            <!-- Arka Plan Müzik Çaları -->
-            <div class="bg-music-player">
-                <button class="btn-music-action" onclick="prevMusic()">⏮️</button>
-                <button class="btn-music-action" id="btnBgMusicPlay" onclick="toggleBgMusic()">▶</button>
-                <button class="btn-music-action" onclick="nextMusic()">⏭️</button>
-                <span class="music-title-display" id="bgMusicTitle">Müzik 1</span>
-                <input type="range" class="music-volume-slider" min="0" max="1" step="0.05" value="0.4" oninput="setBgMusicVolume(this.value)">
-                <audio id="bgAudio" src="./muzik1.mp3" preload="metadata"></audio>
-            </div>
-
             <div class="header-search-container" id="headerSearchBox">
                 <button class="btn-toggle-search" onclick="toggleSearchBox()">
                     🔍 <span>Ara</span>
@@ -846,14 +789,6 @@
         let privMessages = [];
         let activeTab = 'main';
 
-        // Arka Plan Müzik Listesi
-        const musicPlaylist = [
-            { name: "Müzik 1", src: "./muzik1.mp3" },
-            { name: "Müzik 2", src: "./muzik2.mp3" },
-            { name: "Müzik 3", src: "./muzik3.mp3" }
-        ];
-        let currentMusicIndex = 0;
-
         function decodeLatin1ToUtf8(str) {
             try { return decodeURIComponent(escape(str)); } catch (e) { return str; }
         }
@@ -910,42 +845,6 @@
                     <h3>⚠️ Otomatik Dosya Okuma Engellendi</h3>
                     <p style="margin-top: 10px;">Lütfen üstteki butonlardan <b>message_2.json</b> ve <b>message_1.json</b> dosyalarını yükleyin.</p>
                 </div>`;
-        }
-
-        /* Müzik Çalar Fonksiyonları */
-        function toggleBgMusic() {
-            const audio = document.getElementById('bgAudio');
-            const btn = document.getElementById('btnBgMusicPlay');
-            if (audio.paused) {
-                audio.play().then(() => { btn.innerText = '❚❚'; }).catch(() => {});
-            } else {
-                audio.pause();
-                btn.innerText = '▶';
-            }
-        }
-
-        function loadMusicTrack(idx) {
-            currentMusicIndex = idx;
-            const audio = document.getElementById('bgAudio');
-            const title = document.getElementById('bgMusicTitle');
-            const btn = document.getElementById('btnBgMusicPlay');
-            audio.src = musicPlaylist[currentMusicIndex].src;
-            title.innerText = musicPlaylist[currentMusicIndex].name;
-            audio.play().then(() => { btn.innerText = '❚❚'; }).catch(() => { btn.innerText = '▶'; });
-        }
-
-        function nextMusic() {
-            currentMusicIndex = (currentMusicIndex + 1) % musicPlaylist.length;
-            loadMusicTrack(currentMusicIndex);
-        }
-
-        function prevMusic() {
-            currentMusicIndex = (currentMusicIndex - 1 + musicPlaylist.length) % musicPlaylist.length;
-            loadMusicTrack(currentMusicIndex);
-        }
-
-        function setBgMusicVolume(val) {
-            document.getElementById('bgAudio').volume = val;
         }
 
         function toggleSearchBox() {
